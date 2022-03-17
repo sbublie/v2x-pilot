@@ -1,17 +1,21 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-abstract class Enum<T> {
-  final T value;
+class LaneType {
+  final int id;
+  LaneType(this.id);
 
-  const Enum(this.value);
-}
-
-class LaneType<int> extends Enum<int> {
-  const LaneType(int val) : super(val);
-
-  static const LaneType vehicleLane = LaneType(0);
-  static const LaneType bikeLane = LaneType(1);
-  static const LaneType crosswalk = LaneType(2);
+  String name() {
+    switch (id) {
+      case 0:
+        return "Vehicle Lane";
+      case 1:
+        return "Bike Lane";
+      case 2:
+        return "Crosswalk";
+      default:
+        return "undefined";
+    }
+  }
 }
 
 class LaneCollection {
@@ -33,7 +37,7 @@ class Lane {
   final int id;
   final LaneType type;
   final List<LatLng> nodes;
-  final int? signalGroupId;
+  final ConnectsWith? connectsWith;
   final int? ingressApproachId;
   final int? egressApproachId;
   final int? approachType;
@@ -45,11 +49,19 @@ class Lane {
       this.id,
       this.type,
       this.nodes,
-      this.signalGroupId,
+      this.connectsWith,
       this.ingressApproachId,
       this.egressApproachId,
       this.approachType,
       this.sharedWithId,
       this.maneuverId,
       this.polyline);
+}
+
+class ConnectsWith {
+  final int? laneId;
+  final int? maneuverId;
+  final int? signalGroupId;
+
+  ConnectsWith(this.laneId, this.maneuverId, this.signalGroupId);
 }
