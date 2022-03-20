@@ -99,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
                       SignalGroupCollection signalGroupCollection =
                           BackendController().getSignalGroupCollection(
-                              result, laneCollection.lanes);
+                              result, laneCollection.lanes, context);
 
                       return Scaffold(
                         body: GoogleMap(
@@ -120,7 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 String readIntersection = """
-query GetIntersections(\$intersection: ID!){
+query GetIntersection(\$intersection: ID!){
   messages {
     messages {intersection_id, spat_available, map_available}
   }

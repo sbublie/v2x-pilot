@@ -64,7 +64,7 @@ class BackendController {
   }
 
   SignalGroupCollection getSignalGroupCollection(
-      QueryResult result, List<Lane> lanes) {
+      QueryResult result, List<Lane> lanes, BuildContext context) {
     List? signalGroups =
         result.data?['intersection']?['item']?['signal_groups'];
     List<SignalGroup> allSignalGroups = [];
@@ -83,6 +83,28 @@ class BackendController {
                 strokeColor: Colors.black,
                 strokeWidth: 2,
                 zIndex: 2,
+                onTap: () => {
+                      showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text("ID: " + signalGroup['id'].toString()),
+                                    Text("State: " + signalGroup['state']),
+                                    Text("Min End Time: " +
+                                        signalGroup['min_end_time'].toString()),
+                                    Text("Max End Time: " +
+                                        signalGroup['max_end_time'].toString()),
+                                    Text("Likely Time: " +
+                                        signalGroup['likely_time'].toString()),
+                                    Text("Confidence: " +
+                                        signalGroup['confidence'].toString())
+                                  ],
+                                ),
+                              ))
+                    },
                 radius: 1);
 
             SignalGroup newSignalGroup = SignalGroup(
