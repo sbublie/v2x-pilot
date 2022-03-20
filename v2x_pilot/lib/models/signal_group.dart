@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class SignalGroupState {
-  final int state;
+  final String state;
   SignalGroupState(this.state);
 
   Color color() {
     switch (state) {
-      case 1:
+      case "GREEN":
         return Colors.green;
-      case 2:
+      case "YELLOW":
         return Colors.yellow;
-      case 3:
+      case "RED":
         return Colors.red;
-      case 4:
+      case "DARK":
         return Colors.black;
       default:
         return Colors.white;
