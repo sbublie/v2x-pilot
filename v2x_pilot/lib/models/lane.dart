@@ -1,16 +1,16 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class LaneType {
-  final int id;
-  LaneType(this.id);
+  final String type;
+  LaneType(this.type);
 
   String name() {
-    switch (id) {
-      case 0:
+    switch (type) {
+      case 'VEHICLELANE':
         return "Vehicle Lane";
-      case 1:
+      case 'BIKELANE':
         return "Bike Lane";
-      case 2:
+      case "CROSSWALK":
         return "Crosswalk";
       default:
         return "undefined";
