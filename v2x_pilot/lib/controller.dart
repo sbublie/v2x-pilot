@@ -4,8 +4,10 @@ import 'package:v2x_pilot/models/lane.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:v2x_pilot/models/signal_group.dart';
-import 'models/lane.dart';
+import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart' as latlong2;
+
+import 'models/lane.dart';
 
 class BackendController {
   LaneCollection getLaneCollection(QueryResult result) {
@@ -94,11 +96,14 @@ class BackendController {
                                     Text("ID: " + signalGroup['id'].toString()),
                                     Text("State: " + signalGroup['state']),
                                     Text("Min End Time: " +
-                                        signalGroup['min_end_time'].toString()),
+                                        convertTime(
+                                            signalGroup['min_end_time'])),
                                     Text("Max End Time: " +
-                                        signalGroup['max_end_time'].toString()),
+                                        convertTime(
+                                            signalGroup['max_end_time'])),
                                     Text("Likely Time: " +
-                                        signalGroup['likely_time'].toString()),
+                                        convertTime(
+                                            signalGroup['likely_time'])),
                                     Text("Confidence: " +
                                         signalGroup['confidence'].toString())
                                   ],
@@ -125,4 +130,12 @@ class BackendController {
 
     return SignalGroupCollection(allSignalGroups, allCircles);
   }
+}
+
+String convertTime(timestamp) {
+  if (timestamp == null) {
+    return "No data";
+  }
+  var date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+  return DateFormat('HH:mm:ss').format(date);
 }
