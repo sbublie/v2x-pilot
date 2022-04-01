@@ -41,7 +41,7 @@ class BackendController {
       Polyline newPolyline = Polyline(
           polylineId: PolylineId(lane['id'].toString()),
           points: nodesLatLong,
-          //color: Colors.red,
+          color: const Color.fromARGB(255, 0, 0, 255),
           width: 5);
 
       ConnectsWith connectsWith = ConnectsWith(
@@ -85,6 +85,7 @@ class BackendController {
                 strokeColor: Colors.black,
                 strokeWidth: 2,
                 zIndex: 2,
+                consumeTapEvents: true,
                 onTap: () => {
                       showDialog(
                           context: context,
