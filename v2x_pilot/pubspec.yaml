@@ -37,6 +37,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   graphql_flutter: ^5.0.1
   latlong2: ^0.8.1
+  intl: ^0.17.0
+  floating_bottom_navigation_bar: ^1.5.2
 
 dev_dependencies:
   flutter_test:
