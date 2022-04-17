@@ -35,14 +35,15 @@ class _MapPageState extends State<MapPage> {
         client: client,
         child: Query(
             options: QueryOptions(
-              // Use signal intersection query from util package
-              document: gql(readIntersection),
-              variables: const {
-                // TODO: Implement intersection selection
-                'intersection': 309,
-              },
-              //pollInterval: const Duration(seconds: 10),
-            ),
+                // Use signal intersection query from util package
+                document: gql(readIntersection),
+                variables: const {
+                  // TODO: Implement intersection selection
+                  'intersection': 309,
+                },
+                fetchPolicy: FetchPolicy.noCache
+                //pollInterval: const Duration(seconds: 10),
+                ),
             builder: (QueryResult intersectionResult,
                 {VoidCallback? refetch, FetchMore? fetchMore}) {
               if (intersectionResult.hasException) {
@@ -82,7 +83,7 @@ class _MapPageState extends State<MapPage> {
                         'intersection': 309,
                       },
                       // TODO: Investigate best cache strategy
-                      fetchPolicy: FetchPolicy.cacheAndNetwork,
+                      fetchPolicy: FetchPolicy.noCache,
                       // TODO: Change the poll duration for live data
                       pollInterval: const Duration(seconds: 10),
                     ),
