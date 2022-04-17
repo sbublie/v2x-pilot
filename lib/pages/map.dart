@@ -68,6 +68,7 @@ class _MapPageState extends State<MapPage> {
                       variables: {
                         'intersection': 309,
                       },
+                      fetchPolicy: FetchPolicy.cacheAndNetwork,
                       pollInterval: const Duration(seconds: 10),
                     ),
                     builder: (QueryResult result,
