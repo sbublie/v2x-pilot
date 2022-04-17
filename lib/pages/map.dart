@@ -44,7 +44,7 @@ class _MapPageState extends State<MapPage> {
               }
 
               if (intersectionResult.isLoading) {
-                return const Text('Loading');
+                return const V2XLoadingIndicator();
               }
 
               LaneCollection laneCollection =
@@ -78,7 +78,7 @@ class _MapPageState extends State<MapPage> {
                       }
 
                       if (result.isLoading) {
-                        return const Text('Loading');
+                        return const V2XLoadingIndicator();
                       }
 
                       SignalGroupCollection signalGroupCollection =
