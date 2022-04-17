@@ -11,7 +11,9 @@ import '/controller.dart';
 import '/provider/settings.dart';
 import '/util/queries.dart';
 import '/ui/dialogs.dart';
+import '/ui/elements.dart';
 
+/// Page to display a map containing important intersection data
 class MapPage extends StatefulWidget {
   const MapPage({Key? key}) : super(key: key);
 
@@ -23,15 +25,20 @@ class _MapPageState extends State<MapPage> {
   final Completer<GoogleMapController> _controller = Completer();
   @override
   Widget build(BuildContext context) {
+    // Create GraphQL client by using the server url from the settings
     HttpLink link = HttpLink(context.watch<AppSettings>().serverURL);
     ValueNotifier<GraphQLClient> client = ValueNotifier(
         GraphQLClient(cache: GraphQLCache(store: HiveStore()), link: link));
+
+    // First provider for fetching intersection data
     return GraphQLProvider(
         client: client,
         child: Query(
             options: QueryOptions(
+              // Use signal intersection query from util package
               document: gql(readIntersection),
-              variables: {
+              variables: const {
+                // TODO: Implement intersection selection
                 'intersection': 309,
               },
               //pollInterval: const Duration(seconds: 10),
@@ -40,6 +47,7 @@ class _MapPageState extends State<MapPage> {
                 {VoidCallback? refetch, FetchMore? fetchMore}) {
               if (intersectionResult.hasException) {
                 //return Text(intersectionResult.exception.toString());
+                // TODO: Error handling
                 return ConnectionDialog(context: context);
               }
 
@@ -47,6 +55,7 @@ class _MapPageState extends State<MapPage> {
                 return const V2XLoadingIndicator();
               }
 
+              // Resolve and map api response
               LaneCollection laneCollection =
                   BackendController().getLaneCollection(intersectionResult);
 
@@ -60,21 +69,28 @@ class _MapPageState extends State<MapPage> {
                   markerId: const MarkerId('refMarker'),
                   position: laneCollection.refPosition);
               List<Marker> markers = [refMarker];
+
+              // Second provider for fetching signal group data
               return GraphQLProvider(
                   client: client,
                   child: Query(
                     options: QueryOptions(
+                      // Use signal group query from util package
                       document: gql(readSignalGroups),
-                      variables: {
+                      // TODO: Implement intersection selection
+                      variables: const {
                         'intersection': 309,
                       },
+                      // TODO: Investigate best cache strategy
                       fetchPolicy: FetchPolicy.cacheAndNetwork,
+                      // TODO: Change the poll duration for live data
                       pollInterval: const Duration(seconds: 10),
                     ),
                     builder: (QueryResult result,
                         {VoidCallback? refetch, FetchMore? fetchMore}) {
                       if (result.hasException) {
                         //return Text(result.exception.toString());
+                        // TODO: Error handling
                         return ConnectionDialog(context: context);
                       }
 
@@ -82,6 +98,7 @@ class _MapPageState extends State<MapPage> {
                         return const V2XLoadingIndicator();
                       }
 
+                      // Resolve and map api response
                       SignalGroupCollection signalGroupCollection =
                           BackendController().getSignalGroupCollection(
                               result, laneCollection.lanes, context);
