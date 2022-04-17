@@ -20,7 +20,7 @@ class _ConnectionDialogState extends State<ConnectionDialog> {
   @override
   Widget build(BuildContext ctx) {
     return AlertDialog(
-      title: const Text('No connection'),
+      title: const Text('V2X-Server can\'t be reached!'),
       content: Container(
         constraints: BoxConstraints(maxWidth: 500),
         child: Column(
@@ -28,7 +28,7 @@ class _ConnectionDialogState extends State<ConnectionDialog> {
           children: [
             //Divider(height: 20, color: Colors.grey),
             const Text(
-              "No conncetion to the V2X-Server! Please enter the address under which the V2X-Server is running. Make sure to connect both devices to the same network.",
+              "Please enter the address under which the V2X-Server is running. Make sure to connect both devices to the same network.",
               style: TextStyle(fontSize: 15),
             ),
             const SizedBox(
@@ -50,10 +50,7 @@ class _ConnectionDialogState extends State<ConnectionDialog> {
             TextButton(
               child: const Text('Confirm'),
               onPressed: () {
-                //setState(() {
                 context.read<AppSettings>().setServerURL(textValue);
-                //Navigator.of(ctx).pop();
-                //});
               },
             ),
           ],
@@ -108,10 +105,8 @@ class _SettingsDialogState extends State<SettingsDialog> {
             TextButton(
               child: const Text('Confirm'),
               onPressed: () {
-                //setState(() {
                 context.read<AppSettings>().setServerURL(textValue);
                 Navigator.of(ctx).pop();
-                //});
               },
             ),
           ],

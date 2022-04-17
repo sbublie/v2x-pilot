@@ -73,7 +73,8 @@ class _MapPageState extends State<MapPage> {
                     builder: (QueryResult result,
                         {VoidCallback? refetch, FetchMore? fetchMore}) {
                       if (result.hasException) {
-                        return Text(result.exception.toString());
+                        //return Text(result.exception.toString());
+                        return ConnectionDialog(context: context);
                       }
 
                       if (result.isLoading) {
