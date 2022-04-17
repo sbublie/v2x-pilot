@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:floating_bottom_navigation_bar/floating_bottom_navigation_bar.dart';
+import 'package:v2x_pilot/pages/pilot.dart';
 
 import '/ui/dialogs.dart';
 import '/pages/map.dart';
@@ -12,7 +13,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _index = 0;
+  int _selectedIndex = 0;
+
+  static const List<Widget> _widgetOptions = <Widget>[MapPage(), PilotPage()];
 
   @override
   Widget build(BuildContext context) {
@@ -41,8 +44,8 @@ class _MyHomePageState extends State<MyHomePage> {
             selectedItemColor: Colors.blue,
             selectedBackgroundColor: Colors.grey[400],
             unselectedItemColor: Colors.black,
-            onTap: (int val) => setState(() => _index = val),
-            currentIndex: _index,
+            onTap: (int val) => setState(() => _selectedIndex = val),
+            currentIndex: _selectedIndex,
             items: [
               FloatingNavbarItem(
                 icon: Icons.map,
@@ -55,6 +58,8 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ),
-        body: const MapPage());
+        body: Center(
+          child: _widgetOptions.elementAt(_selectedIndex),
+        ));
   }
 }
