@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 
 import 'package:provider/provider.dart';
 
@@ -15,14 +14,13 @@ class ConnectionDialog extends StatefulWidget {
 }
 
 class _ConnectionDialogState extends State<ConnectionDialog> {
-  String textValue = "http://127.0.0.1:5000/graphql";
-
   @override
   Widget build(BuildContext ctx) {
+    String textValue = context.read<AppSettings>().serverURL;
     return AlertDialog(
       title: const Text('V2X-Server can\'t be reached!'),
       content: Container(
-        constraints: BoxConstraints(maxWidth: 500),
+        constraints: const BoxConstraints(maxWidth: 500),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -35,7 +33,7 @@ class _ConnectionDialogState extends State<ConnectionDialog> {
               height: 20,
             ),
             TextFormField(
-                initialValue: context.watch<AppSettings>().serverURL,
+                initialValue: textValue,
                 onChanged: (input) {
                   textValue = input;
                 },
@@ -43,7 +41,7 @@ class _ConnectionDialogState extends State<ConnectionDialog> {
                   border: OutlineInputBorder(),
                   labelText: 'V2X-Server Address',
                 )),
-            Divider(
+            const Divider(
               height: 25,
               color: Colors.grey,
             ),
@@ -70,14 +68,13 @@ class SettingsDialog extends StatefulWidget {
 }
 
 class _SettingsDialogState extends State<SettingsDialog> {
-  String textValue = "http://127.0.0.1:5000/graphql";
-
   @override
   Widget build(BuildContext ctx) {
+    String textValue = context.read<AppSettings>().serverURL;
     return AlertDialog(
       title: const Text('Settings'),
       content: Container(
-        constraints: BoxConstraints(maxWidth: 500),
+        constraints: const BoxConstraints(maxWidth: 500),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -90,7 +87,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
               height: 20,
             ),
             TextFormField(
-                initialValue: context.watch<AppSettings>().serverURL,
+                initialValue: textValue,
                 onChanged: (input) {
                   textValue = input;
                 },
@@ -98,7 +95,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
                   border: OutlineInputBorder(),
                   labelText: 'V2X-Server Address',
                 )),
-            Divider(
+            const Divider(
               height: 25,
               color: Colors.grey,
             ),
