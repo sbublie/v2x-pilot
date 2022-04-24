@@ -85,7 +85,7 @@ class _MapPageState extends State<MapPage> {
                       // TODO: Investigate best cache strategy
                       fetchPolicy: FetchPolicy.noCache,
                       // TODO: Change the poll duration for live data
-                      pollInterval: const Duration(seconds: 10),
+                      pollInterval: const Duration(milliseconds: 800),
                     ),
                     builder: (QueryResult result,
                         {VoidCallback? refetch, FetchMore? fetchMore}) {
