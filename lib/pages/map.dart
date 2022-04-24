@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:v2x_pilot/controller.dart';
-import 'package:v2x_pilot/models/signal_group.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 
@@ -12,6 +10,7 @@ import '/provider/settings.dart';
 import '/util/queries.dart';
 import '/ui/dialogs.dart';
 import '/ui/elements.dart';
+import '/models/signal_group.dart';
 
 /// Page to display a map containing important intersection data
 class MapPage extends StatefulWidget {

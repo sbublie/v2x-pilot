@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:v2x_pilot/provider/pilot.dart';
 
 import '/provider/settings.dart';
 import '/pages/main.dart';
@@ -9,6 +10,7 @@ void main() async {
   await initHiveForFlutter();
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => AppSettings()),
+    ChangeNotifierProvider(create: (_) => PilotProvider())
   ], child: const MyApp()));
 }
 
