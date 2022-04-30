@@ -76,70 +76,111 @@ class _PilotPageState extends State<PilotPage> {
               List<Marker> markers = [refMarker];
 
               // Second provider for fetching signal group data
-              return Center(
-                  child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  PilotDataWidget(),
-                  SizedBox(
-                    height: 400,
-                    width: 400,
-                    child: GoogleMap(
-                      markers: markers.toSet(),
-                      polylines: laneCollection.getPolylines().toSet(),
-                      mapType: MapType.satellite,
-                      myLocationEnabled: true,
-                      myLocationButtonEnabled: true,
-                      initialCameraPosition: init,
-                      onMapCreated: (GoogleMapController controller) {
-                        _location.onLocationChanged.listen((l) {
-                          int currentApproachLane =
-                              getApproachLaneId(laneCollection, l);
-                          context
-                              .read<PilotProvider>()
-                              .setCurrentApproachLane(currentApproachLane);
-                          context.read<PilotProvider>().setCurrentPosition(
-                              LatLng(l.latitude!, l.longitude!));
-                          controller.animateCamera(
-                            CameraUpdate.newCameraPosition(
-                              CameraPosition(
-                                  target: LatLng(l.latitude!, l.longitude!),
-                                  zoom: 18,
-                                  tilt: 40,
-                                  bearing: l.heading!),
+              return GraphQLProvider(
+                  client: client,
+                  child: Query(
+                      options: QueryOptions(
+                        // Use signal group query from util package
+                        document: gql(readSignalGroups),
+                        // TODO: Implement intersection selection
+                        variables: const {
+                          'intersection': 309,
+                        },
+                        // TODO: Investigate best cache strategy
+                        fetchPolicy: FetchPolicy.noCache,
+                        // TODO: Change the poll duration for live data
+                        pollInterval: const Duration(milliseconds: 800),
+                      ),
+                      builder: (QueryResult result,
+                          {VoidCallback? refetch, FetchMore? fetchMore}) {
+                        if (result.hasException) {
+                          //return Text(result.exception.toString());
+                          // TODO: Error handling
+                          return ConnectionDialog(context: context);
+                        }
+
+                        if (result.isLoading) {
+                          return const V2XLoadingIndicator();
+                        }
+
+                        // Resolve and map api response
+                        SignalGroupCollection signalGroupCollection =
+                            BackendController().getSignalGroupCollection(
+                                result, laneCollection.lanes, context);
+
+                        return Center(
+                            child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            PilotDataWidget(
+                              approachList: laneCollection.approaches,
+                              signalGroupCollection: signalGroupCollection,
                             ),
-                          );
-                        });
-                        _controller.complete(controller);
-                      },
-                    ),
-                  ),
-                ],
-              ));
+                            SizedBox(
+                              height: 400,
+                              width: 400,
+                              child: GoogleMap(
+                                markers: markers.toSet(),
+                                polylines:
+                                    laneCollection.getPolylines().toSet(),
+                                mapType: MapType.satellite,
+                                myLocationEnabled: true,
+                                myLocationButtonEnabled: true,
+                                initialCameraPosition: init,
+                                onMapCreated: (GoogleMapController controller) {
+                                  _location.onLocationChanged.listen((l) {
+                                    int currentApproachLane =
+                                        getApproachId(laneCollection, l);
+                                    context
+                                        .read<PilotProvider>()
+                                        .setCurrentApproachLane(
+                                            currentApproachLane);
+                                    context
+                                        .read<PilotProvider>()
+                                        .setCurrentPosition(
+                                            LatLng(l.latitude!, l.longitude!));
+                                    controller.animateCamera(
+                                      CameraUpdate.newCameraPosition(
+                                        CameraPosition(
+                                            target: LatLng(
+                                                l.latitude!, l.longitude!),
+                                            zoom: 18,
+                                            tilt: 40,
+                                            bearing: l.heading!),
+                                      ),
+                                    );
+                                  });
+                                  _controller.complete(controller);
+                                },
+                              ),
+                            ),
+                          ],
+                        ));
+                      }));
             }));
   }
-}
 
-int getApproachLaneId(LaneCollection collection, LocationData locationData) {
-  int approachLane = 0;
-  var testLng = toolkit.LatLng(47.65490, 9.48093);
-  for (var lane in collection.lanes) {
-    var toolkitNodes = <toolkit.LatLng>[];
-    for (var node in lane.nodes) {
-      toolkitNodes.add(toolkit.LatLng(node.latitude, node.longitude));
-    }
+  /// Check if the specified location is close to any approaching lanes
+  int getApproachId(LaneCollection collection, LocationData locationData) {
+    int approachId = 0;
+    for (var lane in collection.lanes) {
+      var toolkitNodes = <toolkit.LatLng>[];
+      for (var node in lane.nodes) {
+        toolkitNodes.add(toolkit.LatLng(node.latitude, node.longitude));
+      }
 
-    if (toolkit.PolygonUtil.isLocationOnPath(
-        //toolkit.LatLng(locationData.latitude!, locationData.longitude!),
-        testLng,
-        toolkitNodes,
-        true,
-        tolerance: 2)) {
-      if (lane.egressApproachId != null) {
-      } else {
-        approachLane = lane.id;
+      // set current approach ID if lane lane is within tolerance of X meters and
+      // if is not a
+      if (toolkit.PolygonUtil.isLocationOnPath(
+          toolkit.LatLng(locationData.latitude!, locationData.longitude!),
+          toolkitNodes,
+          true,
+          tolerance: 2)) {
+        if (lane.ingressApproachId != null) {
+          approachId = lane.ingressApproachId!;
+        }
       }
     }
+    return approachId;
   }
-  return approachLane;
 }
