@@ -46,12 +46,24 @@ class SignalGroup {
     if (timestamp == null) {
       return "No data";
     }
-    DateTime date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+    DateTime date =
+        DateTime.fromMillisecondsSinceEpoch(timestamp * 1000, isUtc: true)
+            .add(Duration(hours: 1));
     return DateFormat('HH:mm:ss').format(date);
   }
 
-  String timeLeft(int timestamp) {
-    // TODO time left function
-    return "No data";
+  String timeLeft(timestamp) {
+    return DateTime.fromMillisecondsSinceEpoch(timestamp * 1000, isUtc: true)
+        .subtract(Duration(hours: 1))
+        .difference(DateTime.now())
+        .inSeconds
+        .toString();
+
+    return DateTime.now()
+        .add(Duration(hours: 1))
+        .difference(
+            DateTime.fromMillisecondsSinceEpoch(timestamp * 1000, isUtc: true))
+        .inSeconds
+        .toString();
   }
 }
