@@ -24,7 +24,8 @@ class PilotPage extends StatefulWidget {
 }
 
 class _PilotPageState extends State<PilotPage> {
-  CameraPosition init = CameraPosition(target: LatLng(49, 9), zoom: 12);
+  CameraPosition init = CameraPosition(
+      target: LatLng(47.655013328784996, 9.482121257439589), zoom: 12);
   final Completer<GoogleMapController> _controller = Completer();
   final Location _location = Location();
 
@@ -110,11 +111,17 @@ class _PilotPageState extends State<PilotPage> {
 
                         return Center(
                             child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
+                            SizedBox(
+                              height: 16,
+                            ),
                             PilotDataWidget(
                               approachList: laneCollection.approaches,
                               signalGroupCollection: signalGroupCollection,
+                            ),
+                            SizedBox(
+                              height: 16,
                             ),
                             SizedBox(
                               height: 400,
@@ -163,6 +170,7 @@ class _PilotPageState extends State<PilotPage> {
   /// Check if the specified location is close to any approaching lanes
   int getApproachId(LaneCollection collection, LocationData locationData) {
     int approachId = 0;
+    var testLng = toolkit.LatLng(47.65518587000074, 9.482358632915775);
     for (var lane in collection.lanes) {
       var toolkitNodes = <toolkit.LatLng>[];
       for (var node in lane.nodes) {
@@ -173,6 +181,7 @@ class _PilotPageState extends State<PilotPage> {
       // if is not a
       if (toolkit.PolygonUtil.isLocationOnPath(
           toolkit.LatLng(locationData.latitude!, locationData.longitude!),
+          //testLng,
           toolkitNodes,
           true,
           tolerance: 2)) {
