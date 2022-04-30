@@ -9,7 +9,7 @@ class PilotProvider with ChangeNotifier, DiagnosticableTreeMixin {
     notifyListeners();
   }
 
-  LatLng _currentPosition = LatLng(49, 9);
+  LatLng _currentPosition = LatLng(47.65532086041951, 9.481999109807788);
   LatLng get currentPosition => _currentPosition;
   void setCurrentPosition(LatLng currentPosition) {
     _currentPosition = currentPosition;

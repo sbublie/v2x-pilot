@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:v2x_pilot/models/approach.dart';
 import 'package:v2x_pilot/models/lane.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -7,6 +8,7 @@ import 'package:v2x_pilot/models/signal_group.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart' as latlong2;
 
+import '/util/const.dart';
 import 'models/lane.dart';
 
 class BackendController {
@@ -23,6 +25,9 @@ class BackendController {
     List<Lane> allLanes = [];
 
     List? lanes = result.data?['intersection']?['item']?['lanes'];
+
+    List<Approach> approachList = [];
+
     lanes?.forEach((lane) {
       List? nodes = lane?['nodes'];
       List<LatLng> nodesLatLong = [];
@@ -61,8 +66,40 @@ class BackendController {
           lane?['maneuver_id'],
           newPolyline);
       allLanes.add(newLane);
+
+      if (lane?['ingress_approach_id'] != null &&
+          lane?['connects_to']?['signal_group_id'] != null) {
+        int approachId = lane?['ingress_approach_id'];
+        int signalGroupId = lane?['connects_to']?['signal_group_id'];
+
+        if (approachList.isEmpty) {
+          List<int> signalGroups = [];
+          signalGroups.add(signalGroupId);
+          approachList.insert(
+              0, Approach(lane?['ingress_approach_id'], signalGroups));
+        } else {
+          addApproach(approachId, signalGroupId, approachList);
+        }
+      }
     });
-    return LaneCollection(allLanes, refPosition);
+    var reversedList = List.from(approachList.reversed);
+    return LaneCollection(allLanes, refPosition, approachList);
+  }
+
+  void addApproach(
+      int approachId, int signalGroupId, List<Approach> approachList) {
+    for (Approach approach in approachList) {
+      // check if approach already exists and if signalGroup is relevant for vehicle approach
+      if (approachId == approach.id &&
+          approachTypesLSA309[approachId]!.containsKey(signalGroupId)) {
+        approach.signalGroupIds.insert(0, signalGroupId);
+        return;
+      }
+    }
+    // if approach doesn't exists already add a new one
+    List<int> signalGroupList = [];
+    signalGroupList.add(signalGroupId);
+    approachList.add(Approach(approachId, signalGroupList));
   }
 
   SignalGroupCollection getSignalGroupCollection(
