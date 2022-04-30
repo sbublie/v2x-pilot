@@ -66,7 +66,7 @@ class _PilotDataWidgetState extends State<PilotDataWidget> {
     for (SignalGroup signalGroup in widget.signalGroupCollection.signalGroups) {
       if (signalGroup.id == signalGroupId) {
         signalColor = signalGroup.state!.color();
-        signalTime = signalGroup.convertTime(signalGroup.likelyTime);
+        signalTime = signalGroup.timeLeft(signalGroup.likelyTime);
       }
     }
 
