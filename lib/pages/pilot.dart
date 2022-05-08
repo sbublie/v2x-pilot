@@ -24,7 +24,7 @@ class PilotPage extends StatefulWidget {
 }
 
 class _PilotPageState extends State<PilotPage> {
-  CameraPosition init = CameraPosition(
+  CameraPosition init = const CameraPosition(
       target: LatLng(47.655013328784996, 9.482121257439589), zoom: 12);
   final Completer<GoogleMapController> _controller = Completer();
   final Location _location = Location();
@@ -64,12 +64,6 @@ class _PilotPageState extends State<PilotPage> {
               // Resolve and map api response
               LaneCollection laneCollection =
                   BackendController().getLaneCollection(intersectionResult);
-
-              CameraPosition initialPosition = CameraPosition(
-                target: laneCollection.refPosition,
-                zoom: 20,
-                tilt: 0,
-              );
 
               Marker refMarker = Marker(
                   markerId: const MarkerId('refMarker'),
@@ -113,14 +107,14 @@ class _PilotPageState extends State<PilotPage> {
                             child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
-                            SizedBox(
+                            const SizedBox(
                               height: 16,
                             ),
                             PilotDataWidget(
                               approachList: laneCollection.approaches,
                               signalGroupCollection: signalGroupCollection,
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 16,
                             ),
                             Expanded(
@@ -179,14 +173,13 @@ class _PilotPageState extends State<PilotPage> {
         toolkitNodes.add(toolkit.LatLng(node.latitude, node.longitude));
       }
 
-      // set current approach ID if lane lane is within tolerance of X meters and
-      // if is not a
+      // set current approach ID if lane lane is within tolerance of X meters
       if (toolkit.PolygonUtil.isLocationOnPath(
-          //toolkit.LatLng(locationData.latitude!, locationData.longitude!),
-          testLng,
+          toolkit.LatLng(locationData.latitude!, locationData.longitude!),
+          //testLng,
           toolkitNodes,
           true,
-          tolerance: 2)) {
+          tolerance: 4)) {
         if (lane.ingressApproachId != null) {
           approachId = lane.ingressApproachId!;
         }
