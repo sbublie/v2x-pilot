@@ -123,42 +123,44 @@ class _PilotPageState extends State<PilotPage> {
                             SizedBox(
                               height: 16,
                             ),
-                            SizedBox(
-                              height: 400,
-                              width: 400,
-                              child: GoogleMap(
-                                markers: markers.toSet(),
-                                polylines:
-                                    laneCollection.getPolylines().toSet(),
-                                mapType: MapType.satellite,
-                                myLocationEnabled: true,
-                                myLocationButtonEnabled: true,
-                                initialCameraPosition: init,
-                                onMapCreated: (GoogleMapController controller) {
-                                  _location.onLocationChanged.listen((l) {
-                                    int currentApproachLane =
-                                        getApproachId(laneCollection, l);
-                                    context
-                                        .read<PilotProvider>()
-                                        .setCurrentApproachLane(
-                                            currentApproachLane);
-                                    context
-                                        .read<PilotProvider>()
-                                        .setCurrentPosition(
-                                            LatLng(l.latitude!, l.longitude!));
-                                    controller.animateCamera(
-                                      CameraUpdate.newCameraPosition(
-                                        CameraPosition(
-                                            target: LatLng(
-                                                l.latitude!, l.longitude!),
-                                            zoom: 18,
-                                            tilt: 40,
-                                            bearing: l.heading!),
-                                      ),
-                                    );
-                                  });
-                                  _controller.complete(controller);
-                                },
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: GoogleMap(
+                                  markers: markers.toSet(),
+                                  polylines:
+                                      laneCollection.getPolylines().toSet(),
+                                  mapType: MapType.satellite,
+                                  myLocationEnabled: true,
+                                  myLocationButtonEnabled: true,
+                                  initialCameraPosition: init,
+                                  onMapCreated:
+                                      (GoogleMapController controller) {
+                                    _location.onLocationChanged.listen((l) {
+                                      int currentApproachLane =
+                                          getApproachId(laneCollection, l);
+                                      context
+                                          .read<PilotProvider>()
+                                          .setCurrentApproachLane(
+                                              currentApproachLane);
+                                      context
+                                          .read<PilotProvider>()
+                                          .setCurrentPosition(LatLng(
+                                              l.latitude!, l.longitude!));
+                                      controller.animateCamera(
+                                        CameraUpdate.newCameraPosition(
+                                          CameraPosition(
+                                              target: LatLng(
+                                                  l.latitude!, l.longitude!),
+                                              zoom: 18,
+                                              tilt: 40,
+                                              bearing: l.heading!),
+                                        ),
+                                      );
+                                    });
+                                    _controller.complete(controller);
+                                  },
+                                ),
                               ),
                             ),
                           ],
@@ -170,7 +172,7 @@ class _PilotPageState extends State<PilotPage> {
   /// Check if the specified location is close to any approaching lanes
   int getApproachId(LaneCollection collection, LocationData locationData) {
     int approachId = 0;
-    var testLng = toolkit.LatLng(47.65518587000074, 9.482358632915775);
+    var testLng = toolkit.LatLng(47.654770252686184, 9.481934467467234);
     for (var lane in collection.lanes) {
       var toolkitNodes = <toolkit.LatLng>[];
       for (var node in lane.nodes) {
@@ -180,8 +182,8 @@ class _PilotPageState extends State<PilotPage> {
       // set current approach ID if lane lane is within tolerance of X meters and
       // if is not a
       if (toolkit.PolygonUtil.isLocationOnPath(
-          toolkit.LatLng(locationData.latitude!, locationData.longitude!),
-          //testLng,
+          //toolkit.LatLng(locationData.latitude!, locationData.longitude!),
+          testLng,
           toolkitNodes,
           true,
           tolerance: 2)) {
