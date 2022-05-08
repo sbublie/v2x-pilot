@@ -1,15 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:v2x_pilot/models/approach.dart';
-import 'package:v2x_pilot/models/lane.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:v2x_pilot/models/signal_group.dart';
-import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart' as latlong2;
+import 'package:v2x_pilot/ui/dialogs.dart';
 
-import '/util/const.dart';
-import 'models/lane.dart';
+import '/models/lane.dart';
+import '/models/signal_group.dart';
+import '/models/approach.dart';
+import '/util/lsa309_util.dart';
 
 class BackendController {
   LaneCollection getLaneCollection(QueryResult result) {
@@ -91,7 +89,7 @@ class BackendController {
     for (Approach approach in approachList) {
       // check if approach already exists and if signalGroup is relevant for vehicle approach
       if (approachId == approach.id &&
-          approachTypesLSA309[approachId]!.containsKey(signalGroupId)) {
+          LSA309Util.approachTypes[approachId]!.containsKey(signalGroupId)) {
         approach.signalGroupIds.insert(0, signalGroupId);
         return;
       }
@@ -123,31 +121,14 @@ class BackendController {
                 strokeWidth: 2,
                 zIndex: 2,
                 consumeTapEvents: true,
-                onTap: () => {
-                      showDialog(
-                          context: context,
-                          builder: (_) => AlertDialog(
-                                content: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Text("ID: " + signalGroup['id'].toString()),
-                                    Text("State: " + signalGroup['state']),
-                                    Text("Min End Time: " +
-                                        convertTime(
-                                            signalGroup['min_end_time'])),
-                                    Text("Max End Time: " +
-                                        convertTime(
-                                            signalGroup['max_end_time'])),
-                                    Text("Likely Time: " +
-                                        convertTime(
-                                            signalGroup['likely_time'])),
-                                    Text("Confidence: " +
-                                        signalGroup['confidence'].toString())
-                                  ],
-                                ),
-                              ))
-                    },
+                onTap: () {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return SignalGroupDialog(
+                            context: context, signalGroup: signalGroup);
+                      });
+                },
                 radius: 1);
 
             SignalGroup newSignalGroup = SignalGroup(
@@ -168,12 +149,4 @@ class BackendController {
 
     return SignalGroupCollection(allSignalGroups, allCircles);
   }
-}
-
-String convertTime(timestamp) {
-  if (timestamp == null) {
-    return "No data";
-  }
-  var date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
-  return DateFormat('HH:mm:ss').format(date);
 }

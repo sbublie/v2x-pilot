@@ -4,7 +4,8 @@ import 'package:v2x_pilot/models/signal_group.dart';
 import 'package:v2x_pilot/provider/pilot.dart';
 import 'package:provider/provider.dart';
 
-import '/util/const.dart';
+import '../util/lsa309_util.dart';
+import '../util/time_util.dart';
 
 class V2XLoadingIndicator extends StatelessWidget {
   const V2XLoadingIndicator({Key? key}) : super(key: key);
@@ -49,7 +50,6 @@ class _PilotDataWidgetState extends State<PilotDataWidget> {
           children: [
             for (int id in approach.signalGroupIds)
               getSignalArrow(approach.id, id)
-            //Text("  " + approachTypesLSA309[approach.id]![id].toString())
           ],
         );
       }
@@ -59,51 +59,60 @@ class _PilotDataWidgetState extends State<PilotDataWidget> {
   }
 
   Widget getSignalArrow(int approachId, int signalGroupId) {
-    IconData selIcon = Icons.error;
+    Image selIcon = Image.asset("assets/turn_straight.png");
     Color signalColor = Colors.grey;
-    String signalTime = "None";
+    String remainingTime = "No time data!";
 
     for (SignalGroup signalGroup in widget.signalGroupCollection.signalGroups) {
       if (signalGroup.id == signalGroupId) {
+        if (signalGroup.likelyTime != null) {
+          remainingTime =
+              getRemainingTime(signalGroup.likelyTime!).toString() + "s";
+        }
         signalColor = signalGroup.state!.color();
-        signalTime = signalGroup.timeLeft(signalGroup.likelyTime);
       }
     }
 
-    if (approachTypesLSA309[approachId]![signalGroupId][0] == 'straight') {
-      selIcon = Icons.arrow_upward_rounded;
-    }
-    if (approachTypesLSA309[approachId]![signalGroupId][0] == 'left') {
-      selIcon = Icons.arrow_back_rounded;
-    }
+    selIcon = Image.asset(
+      LSA309Util.getIconAsset(approachId, signalGroupId),
+      color: signalColor,
+    );
 
-    return Column(
-      children: [
-        Icon(
-          selIcon,
-          size: 150,
-          color: signalColor,
-        ),
-        Row(
-          children: [
-            Icon(
-              Icons.timer_rounded,
-              size: 50,
-            ),
-            Text(
-              signalTime,
-              style: TextStyle(fontSize: 18),
-            ),
-          ],
-        )
-      ],
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      child: Column(
+        children: [
+          Container(
+            height: 150,
+            child: selIcon,
+          ),
+          SizedBox(
+            height: 8,
+          ),
+          Row(
+            children: [
+              Icon(
+                Icons.timer_rounded,
+                size: 50,
+              ),
+              Text(
+                remainingTime,
+                style: TextStyle(fontSize: 18),
+              ),
+            ],
+          )
+        ],
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     if (context.watch<PilotProvider>().currentApproachLane == 0) {
-      return Text("No approach detected!");
+      return const Text(
+        "No approach detected!",
+        style: TextStyle(fontSize: 25),
+      );
     } else {
       return Column(
         children: [

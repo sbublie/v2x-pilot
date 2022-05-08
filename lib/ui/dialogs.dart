@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-
 import 'package:provider/provider.dart';
 
 import '/provider/settings.dart';
+import '/util/time_util.dart';
 
 class ConnectionDialog extends StatefulWidget {
   final BuildContext context;
@@ -108,6 +108,47 @@ class _SettingsDialogState extends State<SettingsDialog> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class SignalGroupDialog extends StatefulWidget {
+  final BuildContext context;
+  final dynamic signalGroup;
+
+  const SignalGroupDialog(
+      {Key? key, required this.context, required this.signalGroup})
+      : super(key: key);
+
+  @override
+  State<SignalGroupDialog> createState() => _SignalGroupDialogState();
+}
+
+class _SignalGroupDialogState extends State<SignalGroupDialog> {
+  @override
+  Widget build(BuildContext ctx) {
+    return AlertDialog(
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text(
+            "Signal Group " + widget.signalGroup['id'].toString(),
+            style: TextStyle(fontSize: 20),
+          ),
+          SizedBox(
+            height: 8,
+          ),
+          Text("State: " + widget.signalGroup['state']),
+          Text("Min End Time: " +
+              getLabelFromTimestamp(widget.signalGroup['min_end_time'])),
+          Text("Max End Time: " +
+              getLabelFromTimestamp(widget.signalGroup['max_end_time'])),
+          Text("Likely Time: " +
+              getLabelFromTimestamp(widget.signalGroup['likely_time'])),
+          Text("Confidence: " + widget.signalGroup['confidence'].toString())
+        ],
       ),
     );
   }
