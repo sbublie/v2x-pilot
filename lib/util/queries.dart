@@ -1,8 +1,5 @@
 const String readIntersection = """
 query GetIntersection(\$intersection: ID!){
-  messages {
-    messages {intersection_id, spat_available, map_available}
-  }
   intersection(intersectionId: \$intersection) {
     item {
       ref_position{lat, long},
