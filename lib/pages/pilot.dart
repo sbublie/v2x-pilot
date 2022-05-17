@@ -179,7 +179,7 @@ class _PilotPageState extends State<PilotPage> {
           //testLng,
           toolkitNodes,
           true,
-          tolerance: 4)) {
+          tolerance: context.read<AppSettings>().gpsTolerance)) {
         if (lane.ingressApproachId != null) {
           approachId = lane.ingressApproachId!;
         }
