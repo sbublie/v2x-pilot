@@ -70,7 +70,8 @@ class SettingsDialog extends StatefulWidget {
 class _SettingsDialogState extends State<SettingsDialog> {
   @override
   Widget build(BuildContext ctx) {
-    String textValue = context.read<AppSettings>().serverURL;
+    String urlValue = context.read<AppSettings>().serverURL;
+    int gpsTolerance = context.read<AppSettings>().gpsTolerance;
     return AlertDialog(
       title: const Text('Settings'),
       content: Container(
@@ -87,9 +88,30 @@ class _SettingsDialogState extends State<SettingsDialog> {
               height: 20,
             ),
             TextFormField(
-                initialValue: textValue,
+                initialValue: urlValue,
                 onChanged: (input) {
-                  textValue = input;
+                  urlValue = input;
+                },
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'V2X-Server Address',
+                )),
+            const Divider(
+              height: 25,
+              color: Colors.grey,
+            ),
+            const Text(
+              "Enter the GPS tolerance.",
+              style: TextStyle(fontSize: 15),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            TextFormField(
+                keyboardType: TextInputType.number,
+                initialValue: gpsTolerance.toString(),
+                onChanged: (input) {
+                  gpsTolerance = int.parse(input);
                 },
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
@@ -102,7 +124,8 @@ class _SettingsDialogState extends State<SettingsDialog> {
             TextButton(
               child: const Text('Confirm'),
               onPressed: () {
-                context.read<AppSettings>().setServerURL(textValue);
+                context.read<AppSettings>().setServerURL(urlValue);
+                context.read<AppSettings>().setGpsTolerance(gpsTolerance);
                 Navigator.of(ctx).pop();
               },
             ),
@@ -137,7 +160,7 @@ class _SignalGroupDialogState extends State<SignalGroupDialog> {
             "Signal Group " + widget.signalGroup['id'].toString(),
             style: TextStyle(fontSize: 20),
           ),
-          SizedBox(
+          const SizedBox(
             height: 8,
           ),
           Text("State: " + widget.signalGroup['state']),
