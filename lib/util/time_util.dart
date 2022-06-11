@@ -1,20 +1,37 @@
 import 'package:intl/intl.dart';
 
-/// Convert intersection timestamp to date string
+/// Returns HH:mm:ss formatted string converted from intersection [timestamp].
+///
+/// [timestamp] is in seconds from current hour.
 String getLabelFromTimestamp(timestamp) {
   if (timestamp == null) {
     return "No data";
   }
-  DateTime date =
-      DateTime.fromMillisecondsSinceEpoch(timestamp * 1000, isUtc: true)
-          .add(const Duration(hours: 1));
-  return DateFormat('HH:mm:ss').format(date);
+
+  DateTime convertedTs = convertIntersectionTime(timestamp);
+  return DateFormat('HH:mm:ss').format(convertedTs.toLocal());
 }
 
-/// Calculate the remaining time from timestamp
+/// Returns the difference of the current time and the given intersection [timestamp] in seconds.
+///
+/// [timestamp] is in seconds from current hour.
 int getRemainingTime(int timestamp) {
-  return DateTime.fromMillisecondsSinceEpoch(timestamp * 1000, isUtc: true)
-      .subtract(const Duration(hours: 1))
-      .difference(DateTime.now())
-      .inSeconds;
+  DateTime convertedTs = convertIntersectionTime(timestamp);
+  return convertedTs.difference(DateTime.now().toUtc()).inSeconds;
+}
+
+/// Converts the intersection [timestamp] to a unix DateTime.
+///
+/// [timestamp] is in seconds from current hour.
+DateTime convertIntersectionTime(int timestamp) {
+  // Correct timetamp precision
+  double seconds = timestamp / 10;
+
+  // Get current hour timestamp and add timestamp from intersection to it.
+  // TODO: Handle edge cases
+  DateTime now = DateTime.now().toUtc();
+  DateTime time = DateTime.utc(now.year, now.month, now.day, now.hour);
+  DateTime timeAdded = time.add(Duration(seconds: seconds.round()));
+
+  return timeAdded;
 }
