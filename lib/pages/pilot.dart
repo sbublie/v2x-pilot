@@ -146,7 +146,7 @@ class _PilotPageState extends State<PilotPage> {
                                           CameraPosition(
                                               target: LatLng(
                                                   l.latitude!, l.longitude!),
-                                              zoom: 18,
+                                              zoom: 19.8,
                                               tilt: 40,
                                               bearing: l.heading!),
                                         ),
@@ -166,7 +166,6 @@ class _PilotPageState extends State<PilotPage> {
   /// Check if the specified location is close to any approaching lanes
   int getApproachId(LaneCollection collection, LocationData locationData) {
     int approachId = 0;
-    var testLng = toolkit.LatLng(47.654770252686184, 9.481934467467234);
     for (var lane in collection.lanes) {
       var toolkitNodes = <toolkit.LatLng>[];
       for (var node in lane.nodes) {
@@ -176,7 +175,6 @@ class _PilotPageState extends State<PilotPage> {
       // set current approach ID if lane lane is within tolerance of X meters
       if (toolkit.PolygonUtil.isLocationOnPath(
           toolkit.LatLng(locationData.latitude!, locationData.longitude!),
-          //testLng,
           toolkitNodes,
           true,
           tolerance: context.read<AppSettings>().gpsTolerance)) {
