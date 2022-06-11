@@ -1,16 +1,15 @@
-# v2x_pilot
+# V2X-Pilot
 
-A new Flutter project.
+A client application for the [V2X-Server]().
+- Check out smart intersection data from a birds eye perspective. 
+- Use the intersection pilot feature to navigate through the intersection
+
+![Screenshot](./assets/images/v2x-pilot_0.0.1_screenshot1.png)
+
+This project is written in Dart using the Flutter SDK. Thereby the app can be run on iOS, Android, Windows, macOS, Linux and the web. 
+In this early stage of developement the focus is on the Android and web version. 
+
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+To start developing the app please follow the [official guide]() to install Flutter on your machine. After confirming the installation with ``flutter doctor`` you can run the app with ``flutter run`` from the project folder. 

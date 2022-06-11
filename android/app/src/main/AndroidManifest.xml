@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.v2x_pilot">
    <application
-        android:label="V2X Pilot"
+        android:label="V2X-Pilot"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity
@@ -31,6 +31,6 @@
             android:name="flutterEmbedding"
             android:value="2" />
         <meta-data android:name="com.google.android.geo.API_KEY"
-               android:value="AIzaSyA5lA4THNWuUCkuT1UkrdCYPO0I8AYiGBQ"/>
+               android:value="AIzaSyD1JvoLYZI7cfLHwfdA1Z5mRLTJ2RkCMHk"/>
     </application>
 </manifest>
