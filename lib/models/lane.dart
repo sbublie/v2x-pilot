@@ -1,4 +1,5 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:v2x_pilot/models/approach.dart';
 
 class LaneType {
   final String type;
@@ -21,6 +22,7 @@ class LaneType {
 class LaneCollection {
   final List<Lane> lanes;
   final LatLng refPosition;
+  final List<Approach> approaches;
 
   List<Polyline> getPolylines() {
     List<Polyline> polylines = [];
@@ -30,7 +32,7 @@ class LaneCollection {
     return polylines;
   }
 
-  LaneCollection(this.lanes, this.refPosition);
+  LaneCollection(this.lanes, this.refPosition, this.approaches);
 }
 
 class Lane {

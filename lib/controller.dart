@@ -1,13 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:v2x_pilot/models/lane.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:v2x_pilot/models/signal_group.dart';
-import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart' as latlong2;
+import 'package:v2x_pilot/ui/dialogs.dart';
 
-import 'models/lane.dart';
+import '/models/lane.dart';
+import '/models/signal_group.dart';
+import '/models/approach.dart';
+import '/util/lsa309_util.dart';
 
 class BackendController {
   LaneCollection getLaneCollection(QueryResult result) {
@@ -23,6 +23,9 @@ class BackendController {
     List<Lane> allLanes = [];
 
     List? lanes = result.data?['intersection']?['item']?['lanes'];
+
+    List<Approach> approachList = [];
+
     lanes?.forEach((lane) {
       List? nodes = lane?['nodes'];
       List<LatLng> nodesLatLong = [];
@@ -61,8 +64,39 @@ class BackendController {
           lane?['maneuver_id'],
           newPolyline);
       allLanes.add(newLane);
+
+      if (lane?['ingress_approach_id'] != null &&
+          lane?['connects_to']?['signal_group_id'] != null) {
+        int approachId = lane?['ingress_approach_id'];
+        int signalGroupId = lane?['connects_to']?['signal_group_id'];
+
+        if (approachList.isEmpty) {
+          List<int> signalGroups = [];
+          signalGroups.add(signalGroupId);
+          approachList.insert(
+              0, Approach(lane?['ingress_approach_id'], signalGroups));
+        } else {
+          addApproach(approachId, signalGroupId, approachList);
+        }
+      }
     });
-    return LaneCollection(allLanes, refPosition);
+    return LaneCollection(allLanes, refPosition, approachList);
+  }
+
+  void addApproach(
+      int approachId, int signalGroupId, List<Approach> approachList) {
+    for (Approach approach in approachList) {
+      // check if approach already exists and if signalGroup is relevant for vehicle approach
+      if (approachId == approach.id &&
+          LSA309Util.approachTypes[approachId]!.containsKey(signalGroupId)) {
+        approach.signalGroupIds.insert(0, signalGroupId);
+        return;
+      }
+    }
+    // if approach doesn't exists already add a new one
+    List<int> signalGroupList = [];
+    signalGroupList.add(signalGroupId);
+    approachList.add(Approach(approachId, signalGroupList));
   }
 
   SignalGroupCollection getSignalGroupCollection(
@@ -71,8 +105,8 @@ class BackendController {
         result.data?['intersection']?['item']?['signal_groups'];
     List<SignalGroup> allSignalGroups = [];
     List<Circle> allCircles = [];
-    signalGroups?.forEach((signalGroup) {
-      lanes.forEach((Lane lane) {
+    lanes.forEach((Lane lane) {
+      signalGroups?.forEach((signalGroup) {
         if (lane.ingressApproachId != null) {
           if (lane.connectsWith?.signalGroupId == signalGroup['id']) {
             LatLng position = lane.nodes.first;
@@ -86,31 +120,14 @@ class BackendController {
                 strokeWidth: 2,
                 zIndex: 2,
                 consumeTapEvents: true,
-                onTap: () => {
-                      showDialog(
-                          context: context,
-                          builder: (_) => AlertDialog(
-                                content: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Text("ID: " + signalGroup['id'].toString()),
-                                    Text("State: " + signalGroup['state']),
-                                    Text("Min End Time: " +
-                                        convertTime(
-                                            signalGroup['min_end_time'])),
-                                    Text("Max End Time: " +
-                                        convertTime(
-                                            signalGroup['max_end_time'])),
-                                    Text("Likely Time: " +
-                                        convertTime(
-                                            signalGroup['likely_time'])),
-                                    Text("Confidence: " +
-                                        signalGroup['confidence'].toString())
-                                  ],
-                                ),
-                              ))
-                    },
+                onTap: () {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return SignalGroupDialog(
+                            context: context, signalGroup: signalGroup);
+                      });
+                },
                 radius: 1);
 
             SignalGroup newSignalGroup = SignalGroup(
@@ -131,12 +148,4 @@ class BackendController {
 
     return SignalGroupCollection(allSignalGroups, allCircles);
   }
-}
-
-String convertTime(timestamp) {
-  if (timestamp == null) {
-    return "No data";
-  }
-  var date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
-  return DateFormat('HH:mm:ss').format(date);
 }
