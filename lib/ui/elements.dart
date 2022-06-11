@@ -55,13 +55,13 @@ class _PilotDataWidgetState extends State<PilotDataWidget> {
       }
     }
 
-    return Text("Error in matching approaches!");
+    return const Text("Error in matching approaches!");
   }
 
   Widget getSignalArrow(int approachId, int signalGroupId) {
     Image selIcon = Image.asset("assets/turn_straight.png");
     Color signalColor = Colors.grey;
-    String remainingTime = "No time data!";
+    String remainingTime = "No data!";
 
     for (SignalGroup signalGroup in widget.signalGroupCollection.signalGroups) {
       if (signalGroup.id == signalGroupId) {
@@ -82,22 +82,22 @@ class _PilotDataWidgetState extends State<PilotDataWidget> {
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       child: Column(
         children: [
-          Container(
+          SizedBox(
             height: 150,
             child: selIcon,
           ),
-          SizedBox(
+          const SizedBox(
             height: 8,
           ),
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.timer_rounded,
                 size: 50,
               ),
               Text(
                 remainingTime,
-                style: TextStyle(fontSize: 18),
+                style: const TextStyle(fontSize: 18),
               ),
             ],
           )

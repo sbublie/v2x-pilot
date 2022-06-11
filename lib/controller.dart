@@ -80,7 +80,6 @@ class BackendController {
         }
       }
     });
-    var reversedList = List.from(approachList.reversed);
     return LaneCollection(allLanes, refPosition, approachList);
   }
 
@@ -107,7 +106,7 @@ class BackendController {
     List<SignalGroup> allSignalGroups = [];
     List<Circle> allCircles = [];
     lanes.forEach((Lane lane) {
-    signalGroups?.forEach((signalGroup) {
+      signalGroups?.forEach((signalGroup) {
         if (lane.ingressApproachId != null) {
           if (lane.connectsWith?.signalGroupId == signalGroup['id']) {
             LatLng position = lane.nodes.first;

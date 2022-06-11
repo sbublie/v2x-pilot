@@ -21,6 +21,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         extendBody: true,
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: IconButton(
             icon: const Icon(Icons.settings),
