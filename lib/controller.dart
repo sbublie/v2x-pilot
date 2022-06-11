@@ -106,8 +106,8 @@ class BackendController {
         result.data?['intersection']?['item']?['signal_groups'];
     List<SignalGroup> allSignalGroups = [];
     List<Circle> allCircles = [];
+    lanes.forEach((Lane lane) {
     signalGroups?.forEach((signalGroup) {
-      lanes.forEach((Lane lane) {
         if (lane.ingressApproachId != null) {
           if (lane.connectsWith?.signalGroupId == signalGroup['id']) {
             LatLng position = lane.nodes.first;
