@@ -55,6 +55,25 @@ class _MapPageState extends State<MapPage> {
                 return const V2XLoadingIndicator();
               }
 
+              // If there is no data to show an empty map is displayed
+              // TODO: Improve the no data case so that a reload is not required
+              if (intersectionResult.data?['intersection']?['item']
+                      ?['ref_position']?['lat'] ==
+                  null) {
+                CameraPosition initialPosition = const CameraPosition(
+                  target: LatLng(47.655108713428575, 9.48198918618697),
+                  zoom: 20,
+                  tilt: 0,
+                );
+                return GoogleMap(
+                  mapType: MapType.satellite,
+                  initialCameraPosition: initialPosition,
+                  onMapCreated: (GoogleMapController controller) {
+                    _controller.complete(controller);
+                  },
+                );
+              }
+
               // Resolve and map api response
               LaneCollection laneCollection =
                   BackendController().getLaneCollection(intersectionResult);
